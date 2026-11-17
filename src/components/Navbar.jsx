@@ -8,8 +8,10 @@ export default function Navbar() {
         </a>
 
         <nav aria-label="Navegação principal">
-          <a href="#inicio">Início</a>
-          <a href="#servicos">Serviços</a>
+        <a href="#inicio">Início</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#profissionais">Profissionais</a>
+        <a href="#contato">Contato</a>
         </nav>
 
         <a href="#agendamento" className="navbar-cta">

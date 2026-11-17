@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import Professionals from "./components/Professionals";
 import Booking from "./components/Booking";
 import { services } from "./data/barbershop";
+import Contact from "./components/Contact";
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
 
         <Professionals />
         <Booking />
+        <Contact />
       </main>
 
       <footer className="footer">

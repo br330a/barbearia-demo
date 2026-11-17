@@ -292,3 +292,117 @@ button.button-primary {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Contato e localização */
+
+.contact {
+  padding: 110px 0;
+  background: #efeee9;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 100px;
+}
+
+.contact-intro h2 {
+  font-size: clamp(36px, 4.5vw, 58px);
+  line-height: 1.15;
+  letter-spacing: -2.5px;
+  margin: 22px 0;
+}
+
+.contact-intro > p {
+  max-width: 420px;
+  color: #666b66;
+  line-height: 1.9;
+}
+
+.contact-location {
+  margin-top: 64px;
+  padding-top: 26px;
+  border-top: 1px solid #d7d8d1;
+}
+
+.contact-location address {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 21px;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.contact-location address span {
+  font-size: 13px;
+  font-weight: 400;
+  color: #505b4e;
+}
+
+.contact-card {
+  background: #f8f7f4;
+  padding: clamp(30px, 4vw, 56px);
+}
+
+.contact-card h3 {
+  font-size: 25px;
+  letter-spacing: -0.8px;
+  margin: 18px 0 32px;
+}
+
+.contact-hours {
+  margin-bottom: 36px;
+}
+
+.contact-hours-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid #e8e5de;
+  font-size: 14px;
+}
+
+.contact-hours-row span {
+  color: #666b66;
+}
+
+.contact-hours-row strong {
+  text-align: right;
+  font-weight: 700;
+}
+
+.contact-card .button-primary {
+  width: 100%;
+}
+
+.contact-note {
+  margin: 20px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #666b66;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .contact {
+    padding: 75px 0;
+  }
+
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .contact-location {
+    margin-top: 38px;
+  }
+
+  .contact-intro h2 {
+    letter-spacing: -1.5px;
+  }
+}

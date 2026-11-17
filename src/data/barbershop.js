@@ -46,3 +46,26 @@ export const professionals = [
 
 // Deixe vazio enquanto for uma demonstração.
 export const whatsappNumber = "";
+
+
+
+export const business = {
+  name: "FORMA.",
+  city: "Jundiaí — SP",
+  address: "",
+
+  openingHours: [
+    {
+      days: "Segunda a sexta",
+      hours: "09h às 19h",
+    },
+    {
+      days: "Sábado",
+      hours: "09h às 17h",
+    },
+    {
+      days: "Domingo",
+      hours: "Fechado",
+    },
+  ],
+};
