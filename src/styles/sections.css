@@ -1,0 +1,436 @@
+
+/* Profissionais */
+
+.professionals {
+  padding: 110px 0;
+}
+
+.professionals-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 40px;
+  margin-bottom: 42px;
+}
+
+.professionals h2,
+.booking-panel h2 {
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.2;
+  letter-spacing: -2px;
+  margin: 18px 0 0;
+}
+
+.professionals-heading > p {
+  max-width: 290px;
+  color: #666b66;
+  line-height: 1.8;
+}
+
+.professionals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.professional-portrait {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: #e8e5de;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.professional-card:nth-child(2) .professional-portrait {
+  background: #dce0d7;
+}
+
+.professional-card:nth-child(3) .professional-portrait {
+  background: #e4dfd7;
+}
+
+.professional-number {
+  position: absolute;
+  top: 22px;
+  left: 24px;
+  color: #727967;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.professional-initials {
+  font-size: clamp(72px, 10vw, 150px);
+  font-weight: 800;
+  letter-spacing: -8px;
+  color: #fff;
+  user-select: none;
+}
+
+.professional-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 22px;
+}
+
+.professional-info h3 {
+  font-size: 21px;
+  margin: 0 0 6px;
+}
+
+.professional-info p {
+  font-size: 13px;
+  color: #727967;
+  margin: 0;
+}
+
+.professional-info a {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #e8e5de;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.professional-info a:hover {
+  background: #252a27;
+  color: white;
+}
+
+/* Agendamento */
+
+.booking-section {
+  padding: 0 0 110px;
+}
+
+.booking-panel {
+  background: #e8e5de;
+  padding: clamp(40px, 7vw, 100px);
+  text-align: center;
+}
+
+.booking-panel h2 {
+  margin-bottom: 20px;
+}
+
+.booking-panel > p {
+  color: #666b66;
+  max-width: 460px;
+  margin: 0 auto 32px;
+  line-height: 1.8;
+}
+
+button.button-primary {
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.booking-dialog {
+  border: none;
+  border-radius: 12px;
+  padding: 32px;
+  background: #f8f7f4;
+  color: #252a27;
+  width: min(100% - 32px, 500px);
+  max-height: 90dvh;
+  overflow-y: auto;
+  box-shadow: 0 25px 80px #00000024;
+}
+
+.booking-dialog::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+
+.booking-dialog-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.booking-dialog-header h2 {
+  font-size: 30px;
+  letter-spacing: -1px;
+  margin: 10px 0;
+}
+
+.booking-close {
+  background: transparent;
+  border: 0;
+  font-size: 30px;
+  cursor: pointer;
+  color: #252a27;
+  width: 40px;
+  height: 40px;
+}
+
+.booking-description {
+  color: #666b66;
+  line-height: 1.7;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.booking-form {
+  display: grid;
+  gap: 17px;
+}
+
+.booking-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.booking-form input,
+.booking-form select {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 12px;
+  border: 1px solid #d7d8d1;
+  border-radius: 5px;
+  background: white;
+  color: #252a27;
+  font: inherit;
+  font-size: 14px;
+}
+
+.booking-form input:focus-visible,
+.booking-form select:focus-visible,
+.booking-form button:focus-visible,
+.booking-close:focus-visible {
+  outline: 3px solid #727967;
+  outline-offset: 3px;
+}
+
+.booking-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.booking-submit {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.booking-notice {
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+  color: #666b66;
+}
+
+.booking-status {
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  color: #505b4e;
+  margin: 0;
+}
+
+.booking-status:empty {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .professionals {
+    padding: 75px 0;
+  }
+
+  .professionals-heading {
+    display: block;
+  }
+
+  .professionals-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 14px;
+  }
+
+  .professional-info h3 {
+    font-size: 18px;
+  }
+
+  .professional-info p {
+    line-height: 1.5;
+  }
+
+  .booking-section {
+    padding-bottom: 70px;
+  }
+}
+
+@media (max-width: 540px) {
+  .professionals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .professional-portrait {
+    aspect-ratio: 5 / 4;
+  }
+
+  .booking-dialog {
+    position: fixed;
+    inset: auto 0 0;
+    width: 100%;
+    max-width: none;
+    max-height: 92dvh;
+    margin: 0;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px;
+  }
+
+  .booking-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Contato e localização */
+
+.contact {
+  padding: 110px 0;
+  background: #efeee9;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 100px;
+}
+
+.contact-intro h2 {
+  font-size: clamp(36px, 4.5vw, 58px);
+  line-height: 1.15;
+  letter-spacing: -2.5px;
+  margin: 22px 0;
+}
+
+.contact-intro > p {
+  max-width: 420px;
+  color: #666b66;
+  line-height: 1.9;
+}
+
+.contact-location {
+  margin-top: 64px;
+  padding-top: 26px;
+  border-top: 1px solid #d7d8d1;
+}
+
+.contact-location address {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 21px;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.contact-location address span {
+  font-size: 13px;
+  font-weight: 400;
+  color: #505b4e;
+}
+
+.contact-card {
+  background: #f8f7f4;
+  padding: clamp(30px, 4vw, 56px);
+}
+
+.contact-card h3 {
+  font-size: 25px;
+  letter-spacing: -0.8px;
+  margin: 18px 0 32px;
+}
+
+.contact-hours {
+  margin-bottom: 36px;
+}
+
+.contact-hours-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid #e8e5de;
+  font-size: 14px;
+}
+
+.contact-hours-row span {
+  color: #666b66;
+}
+
+.contact-hours-row strong {
+  text-align: right;
+  font-weight: 700;
+}
+
+.contact-card .button-primary {
+  width: 100%;
+}
+
+.contact-note {
+  margin: 20px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #666b66;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .contact {
+    padding: 75px 0;
+  }
+
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .contact-location {
+    margin-top: 38px;
+  }
+
+  .contact-intro h2 {
+    letter-spacing: -1.5px;
+  }
+}
+
+.service-booking {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 15px 0;
+  border: 0;
+  border-top: 1px solid #e8e5de;
+  background: transparent;
+  color: #252a27;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.service-booking:hover {
+  color: #727967;
+}
+
+.service-booking:focus-visible {
+  outline: 3px solid #727967;
+  outline-offset: 3px;
+}

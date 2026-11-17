@@ -1,0 +1,42 @@
+FORMA. — MAPA INTERATIVO DA SEÇÃO DE LOCALIZAÇÃO
+
+1) Extraia este ZIP na RAIZ do projeto barbearia-demo, preservando as pastas.
+   Ele substitui apenas src/components/Contact.jsx e adiciona:
+   - src/components/DemoMap.jsx
+   - src/styles/map.css
+
+2) No terminal da pasta barbearia-demo, instale a dependência:
+   npm install leaflet@^1.9.4
+
+3) Teste no navegador com:
+   npm run dev
+
+4) Valide:
+   npm run lint
+   npm run build
+   git status
+
+5) Se tudo estiver certo, depois de conferir git status:
+   git add .
+   git commit -m "feat: adiciona mapa interativo demonstrativo"
+   git push
+
+O QUE ESTA ATUALIZAÇÃO FAZ:
+- Mapa interativo na seção Contato, com zoom e deslocamento.
+- Ponto de referência na Praça Governador Pedro de Toledo (Centro de Jundiaí),
+  claramente marcado como ILUSTRATIVO. Não é o endereço de um estabelecimento.
+- Marcador customizado FORMA. e popup informativo.
+- Botão 'Ver região no Google Maps' (não são instruções até uma barbearia).
+- Carregamento sob demanda quando a seção se aproxima da tela.
+- Sem rolagem horizontal; no celular, o mapa só captura arrasto após tocar
+  em 'Explorar mapa', e 'Concluir navegação' devolve o gesto de scroll à página.
+- Attribution © OpenStreetMap visível na parte inferior do mapa.
+- Sem banco de dados ou API key.
+
+ATENÇÃO:
+- Os blocos do mapa dependem da conexão com a internet para carregar os tiles.
+- O serviço público de tiles OSM não tem SLA e exige cumprimento da política de uso:
+  https://operations.osmfoundation.org/policies/tiles/
+- Ao usar o site com clientes e tráfego constante, reavalie o provedor de tiles.
+- Arquivo Contact.jsx assume os dados e a estilização existentes no projeto
+  (barbershop.js, sections.css).

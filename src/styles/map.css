@@ -1,0 +1,230 @@
+/* FORMA. — Seção do mapa demonstrativo */
+.forma-location-map {
+  width: 100%;
+  min-width: 0;
+  margin-top: clamp(56px, 7vw, 96px);
+}
+
+.forma-location-map-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.forma-location-map-heading h3 {
+  margin: 10px 0 9px;
+  color: #252a27;
+  font-size: clamp(25px, 3.5vw, 37px);
+  font-weight: 800;
+  letter-spacing: -1.3px;
+  line-height: 1.2;
+}
+
+.forma-location-map-heading p {
+  margin: 0;
+  color: #666b66;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.forma-location-map-link {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 46px;
+  padding: 12px 16px;
+  border: 1px solid #252a27;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.2s, color 0.2s;
+}
+
+.forma-location-map-link:hover {
+  background: #252a27;
+  color: white;
+}
+
+.forma-location-map-frame {
+  position: relative;
+  width: 100%;
+  height: clamp(320px, 42vw, 435px);
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #e8e5de;
+}
+
+.forma-location-map-canvas {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  background: #e8e5de;
+  z-index: 0;
+}
+
+.forma-location-map-canvas.leaflet-container {
+  font-family: "Manrope", sans-serif;
+}
+
+.forma-location-map-canvas .leaflet-control-zoom {
+  border: 0;
+  box-shadow: 0 3px 18px rgb(37 42 39 / 14%);
+}
+
+.forma-location-map-canvas .leaflet-control-zoom a {
+  color: #252a27;
+  background: #f8f7f4;
+}
+
+.forma-location-map-canvas .leaflet-control-attribution {
+  background: rgb(248 247 244 / 93%);
+  color: #252a27;
+  font-size: 11px;
+}
+
+/* Marcador criado apenas com CSS: não precisa baixar imagens adicionais. */
+.forma-demo-marker {
+  border: none;
+  background: transparent;
+}
+
+.forma-demo-marker-symbol {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f8f7f4;
+  border-radius: 50% 50% 50% 9px;
+  background: #252a27;
+  color: #f8f7f4;
+  box-shadow: 0 5px 20px rgb(37 42 39 / 25%);
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  transform: rotate(-45deg);
+}
+
+.forma-demo-marker-label {
+  transform: rotate(45deg);
+  letter-spacing: -1px;
+}
+
+.forma-location-map-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  background: #e8e5de;
+  color: #505b4e;
+  font-size: 13px;
+  text-align: center;
+  z-index: 550;
+}
+
+.forma-location-map-loading-icon {
+  color: #727967;
+  font-size: 30px;
+}
+
+.forma-location-map-loading a {
+  color: #252a27;
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.forma-location-map-touch-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(248 247 244 / 10%);
+  touch-action: pan-y;
+}
+
+.forma-location-map-interaction {
+  position: relative;
+  z-index: 800;
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid #e8e5de;
+  border-radius: 5px;
+  background: #f8f7f4;
+  color: #252a27;
+  box-shadow: 0 2px 10px rgb(37 42 39 / 14%);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.forma-location-map-interaction.is-done {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #252a27;
+  color: #fff;
+}
+
+.forma-location-map-disclaimer {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin: 14px 0 0;
+  color: #666b66;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.forma-location-map-disclaimer span {
+  flex-shrink: 0;
+  font-size: 15px;
+}
+
+.forma-location-map-link:focus-visible,
+.forma-location-map-interaction:focus-visible {
+  outline: 3px solid #727967;
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .forma-location-map-heading {
+    flex-direction: column;
+    align-items: start;
+    gap: 16px;
+  }
+
+  .forma-location-map-link {
+    width: 100%;
+  }
+
+  .forma-location-map-frame {
+    height: 340px;
+  }
+}
+
+@media (max-width: 420px) {
+  .forma-location-map-frame {
+    height: 305px;
+  }
+
+  .forma-location-map-disclaimer {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forma-location-map-link {
+    transition: none;
+  }
+}

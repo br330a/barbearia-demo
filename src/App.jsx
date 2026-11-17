@@ -1,122 +1,85 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useRef } from "react";
+
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import Professionals from "./components/Professionals";
+import Booking from "./components/Booking";
+import Contact from "./components/Contact";
+
+import { services } from "./data/barbershop";
+
+export default function App() {
+  const bookingRef = useRef(null);
+
+  function handleBook(options = {}) {
+    bookingRef.current?.open(options);
+  }
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <Navbar />
 
-      <div className="ticks"></div>
+      <main>
+        <Hero />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <section className="services" id="servicos">
+          <div className="container">
+            <span className="eyebrow">O QUE FAZEMOS</span>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+            <h2>O cuidado está nos detalhes.</h2>
+
+            <p className="section-description">
+              Serviços pensados para o seu estilo,
+              com atenção em cada etapa.
+            </p>
+
+            <div className="services-grid">
+              {services.map((service) => (
+                <article className="service-card" key={service.id}>
+                  <h3>{service.name}</h3>
+                  <p>{service.description}</p>
+
+                  <strong>
+                    {service.price.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </strong>
+
+                  <button
+                    type="button"
+                    className="service-booking"
+                    onClick={() =>
+                      handleBook({ serviceId: service.id })
+                    }
+                  >
+                    Agendar este serviço
+                    <span aria-hidden="true">↗</span>
+                  </button>
+                </article>
+              ))}
+            </div>
+
+            <p className="demo-note">
+              Serviços e valores fictícios para demonstração.
+            </p>
+          </div>
+        </section>
+
+        <Professionals onBook={handleBook} />
+
+        <Booking ref={bookingRef} />
+
+        <Contact />
+      </main>
+
+      <footer className="footer">
+        <div className="container footer-content">
+          <span className="logo">FORMA.</span>
+          <span>Projeto demonstrativo — Barbearia fictícia</span>
+        </div>
+      </footer>
     </>
-  )
+  );
 }
-
-export default App

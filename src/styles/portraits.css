@@ -1,0 +1,122 @@
+/* Retratos dos profissionais — seção principal */
+.professional-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 28%;
+}
+
+.professional-number {
+  z-index: 1;
+  padding: 7px 10px;
+  border-radius: 3px;
+  background: rgb(248 247 244 / 90%);
+  color: #252a27;
+}
+
+/* Escolha visual de barbeiro dentro do agendamento */
+.schedule-barbers {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.schedule-barber {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 105px;
+  padding: 12px 4px 10px;
+  border: 1px solid #e3e1da;
+  border-radius: 8px;
+  background: #fff;
+  color: #252a27;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.schedule-barber:hover {
+  border-color: #a8afa0;
+}
+
+.schedule-barber.is-selected {
+  border-color: #727967;
+  background: #f0f2ed;
+  box-shadow: inset 0 0 0 1px #727967;
+}
+
+.schedule-barber:focus-visible {
+  outline: 3px solid #727967;
+  outline-offset: 3px;
+}
+
+.schedule-barber-avatar {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 24%;
+  background: #e8e5de;
+}
+
+.schedule-barber-any {
+  display: grid;
+  place-items: center;
+  background: #e8e5de;
+  color: #727967;
+  font-size: 24px;
+}
+
+.schedule-barber-name {
+  width: 100%;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  overflow-wrap: break-word;
+}
+
+.schedule-summary-professional {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.schedule-summary-professional img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+@media (max-width: 420px) {
+  .schedule-barbers {
+    gap: 6px;
+  }
+
+  .schedule-barber {
+    min-height: 99px;
+    padding: 9px 3px;
+  }
+
+  .schedule-barber-avatar {
+    width: 46px;
+    height: 46px;
+  }
+
+  .schedule-barber-name {
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schedule-barber {
+    transition: none;
+  }
+}
