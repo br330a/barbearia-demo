@@ -12,8 +12,8 @@ export default function Navbar() {
           <a href="#servicos">Serviços</a>
         </nav>
 
-        <a href="#servicos" className="navbar-cta">
-          Conhecer serviços
+        <a href="#agendamento" className="navbar-cta">
+            Agendar horário
         </a>
       </div>
     </header>
