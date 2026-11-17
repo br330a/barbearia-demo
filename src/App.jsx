@@ -18,7 +18,7 @@ export default function App() {
 
   return (
     <>
-      <Navbar />
+      <Navbar onBook={handleBook} />
 
       <main>
         <Hero />
@@ -71,7 +71,7 @@ export default function App() {
 
         <Booking ref={bookingRef} />
 
-        <Contact />
+        <Contact onBook={handleBook} />
       </main>
 
       <footer className="footer">

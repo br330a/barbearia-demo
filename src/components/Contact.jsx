@@ -1,7 +1,7 @@
 import { business } from "../data/barbershop";
 import DemoMap from "./DemoMap";
 
-export default function Contact() {
+export default function Contact({ onBook }) {
   return (
     <section className="contact" id="contato">
       <div className="container contact-layout">
@@ -46,10 +46,10 @@ export default function Contact() {
             ))}
           </div>
 
-          <a href="#agendamento" className="button-primary">
+          <button type="button" className="button-primary" onClick={() => onBook()}>
             Solicitar agendamento
             <span aria-hidden="true">↗</span>
-          </a>
+          </button>
 
           <p className="contact-note">
             Atendimento mediante confirmação de horário.

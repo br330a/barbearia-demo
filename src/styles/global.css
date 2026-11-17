@@ -67,9 +67,14 @@ a {
 .navbar-cta {
   border: 1px solid #252a27;
   padding: 12px 20px;
+  background: transparent;
+  color: #252a27;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 700;
-  transition: 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .navbar-cta:hover {
@@ -226,7 +231,8 @@ a {
 
 /* Acessibilidade */
 
-a:focus-visible {
+a:focus-visible,
+button:focus-visible {
   outline: 3px solid #727967;
   outline-offset: 4px;
 }

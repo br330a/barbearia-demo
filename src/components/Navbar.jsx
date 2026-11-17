@@ -8,7 +8,7 @@ const links = [
   { label: "Contato", href: "#contato" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ onBook }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -40,9 +40,16 @@ export default function Navbar() {
         </nav>
 
         <div className="navbar-actions">
-          <a href="#agendamento" className="navbar-cta">
+          <button
+            type="button"
+            className="navbar-cta"
+            onClick={() => {
+              setMenuOpen(false);
+              onBook();
+            }}
+          >
             Agendar horário
-          </a>
+          </button>
 
           <button
             type="button"

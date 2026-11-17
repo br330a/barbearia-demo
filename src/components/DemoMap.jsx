@@ -22,6 +22,9 @@ export default function DemoMap() {
 
   // Evita baixar a biblioteca e carregar os mapas antes de chegar à seção.
   useEffect(() => {
+    // Sem IntersectionObserver, o estado inicial já carrega o mapa.
+    // Não instanciar o observador em navegadores que não o suportam.
+    if (shouldLoad || typeof IntersectionObserver === "undefined") return;
     const target = wrapperRef.current;
     if (!target) return;
 
@@ -37,7 +40,7 @@ export default function DemoMap() {
 
     observer.observe(target);
     return () => observer.disconnect();
-  }, []);
+  }, [shouldLoad]);
 
   useEffect(() => {
     if (!shouldLoad) return;
