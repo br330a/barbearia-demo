@@ -1,10 +1,19 @@
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
-import { useRef, useState } from "react";
 import {
   services,
   professionals,
   whatsappNumber,
 } from "../data/barbershop";
+
+const formatPrice = (price) =>
+  price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 function getToday() {
   const date = new Date();
@@ -15,8 +24,11 @@ function getToday() {
   return `${year}-${month}-${day}`;
 }
 
-export default function Booking() {
+const Booking = forwardRef(function Booking(_props, ref) {
   const dialogRef = useRef(null);
+  const contentRef = useRef(null);
+  const headingRef = useRef(null);
+  const [step, setStep] = useState(1);
   const [status, setStatus] = useState("");
 
   const [form, setForm] = useState({
@@ -27,33 +39,72 @@ export default function Booking() {
     time: "",
   });
 
+  const selectedService = services.find((item) => item.id === form.service);
+  const selectedProfessional = professionals.find(
+    (item) => item.id === form.professional
+  );
+
   function updateField(field, value) {
-    setForm((previous) => ({
-      ...previous,
-      [field]: value,
-    }));
+    setForm((previous) => ({ ...previous, [field]: value }));
     setStatus("");
   }
+
+  function openBooking({
+    serviceId = services[0].id,
+    professionalId = "",
+  } = {}) {
+    setForm((previous) => ({
+      ...previous,
+      service: services.some((item) => item.id === serviceId)
+        ? serviceId
+        : services[0].id,
+      professional: professionals.some((item) => item.id === professionalId)
+        ? professionalId
+        : "",
+    }));
+    setStep(1);
+    setStatus("");
+
+    if (!dialogRef.current?.open) {
+      dialogRef.current?.showModal();
+    }
+  }
+
+  useImperativeHandle(ref, () => ({ open: openBooking }));
+
+  useEffect(() => {
+    if (dialogRef.current?.open) {
+      if (contentRef.current) contentRef.current.scrollTop = 0;
+      headingRef.current?.focus();
+    }
+  }, [step]);
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const service = services.find(
-      (item) => item.id === form.service
-    );
+    if (!selectedService || !form.name.trim()) {
+      setStatus("Preencha seu nome e selecione um serviço.");
+      return;
+    }
 
-    const professional = professionals.find(
-      (item) => item.id === form.professional
-    );
+    const requestedDate = new Date(`${form.date}T${form.time}:00`);
+    if (
+      !form.date ||
+      !form.time ||
+      Number.isNaN(requestedDate.getTime()) ||
+      requestedDate <= new Date()
+    ) {
+      setStatus("Escolha uma data e um horário futuros.");
+      return;
+    }
 
     const [year, month, day] = form.date.split("-");
-
     const message = [
       "Olá! Gostaria de solicitar um agendamento.",
       "",
       `Nome: ${form.name.trim()}`,
-      `Serviço: ${service.name}`,
-      `Profissional: ${professional?.name ?? "Sem preferência"}`,
+      `Serviço: ${selectedService.name}`,
+      `Profissional: ${selectedProfessional?.name ?? "Sem preferência"}`,
       `Data desejada: ${day}/${month}/${year}`,
       `Horário desejado: ${form.time}`,
       "",
@@ -61,41 +112,36 @@ export default function Booking() {
     ].join("\n");
 
     const phone = whatsappNumber.replace(/\D/g, "");
-
     if (phone) {
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-
-      window.open(url, "_blank", "noopener,noreferrer");
-      setStatus("Solicitação preparada no WhatsApp.");
+      window.location.assign(
+        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+      );
       return;
     }
 
     try {
       await navigator.clipboard.writeText(message);
-      setStatus("Solicitação copiada! Demonstração concluída.");
+      setStatus("Solicitação copiada! Este é um projeto demonstrativo.");
     } catch {
-      setStatus("Não foi possível copiar a solicitação.");
+      setStatus("Não foi possível copiar. Verifique a permissão do navegador.");
     }
   }
 
   return (
     <>
-      <section className="booking-section" id="agendamento">
+      <section className="schedule-section" id="agendamento">
         <div className="container">
-          <div className="booking-panel">
+          <div className="schedule-banner">
             <span className="eyebrow">SEU PRÓXIMO CORTE</span>
-
             <h2>Um momento para você.</h2>
-
             <p>
-              Escolha seu serviço e solicite um horário.
-              Simples, rápido e sem complicações.
+              Seu estilo merece atenção. Escolha o atendimento e solicite seu
+              horário.
             </p>
-
             <button
-              className="button-primary"
               type="button"
-              onClick={() => dialogRef.current?.showModal()}
+              className="schedule-primary"
+              onClick={() => openBooking()}
             >
               Solicitar agendamento
               <span aria-hidden="true">↗</span>
@@ -106,120 +152,212 @@ export default function Booking() {
 
       <dialog
         ref={dialogRef}
-        className="booking-dialog"
-        aria-labelledby="booking-title"
+        className="schedule-modal"
+        aria-labelledby="schedule-title"
+        aria-describedby="schedule-description"
         onClose={() => setStatus("")}
       >
-        <div className="booking-dialog-header">
-          <div>
-            <span className="eyebrow">FORMA.</span>
-            <h2 id="booking-title">Solicitar horário</h2>
+        <div className="schedule-modal-inner" ref={contentRef}>
+          <div className="schedule-top">
+            <span className="schedule-brand">FORMA.</span>
+            <button
+              type="button"
+              className="schedule-close"
+              onClick={() => dialogRef.current?.close()}
+              aria-label="Fechar agendamento"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
           </div>
 
-          <button
-            className="booking-close"
-            type="button"
-            aria-label="Fechar agendamento"
-            onClick={() => dialogRef.current?.close()}
-          >
-            ×
-          </button>
-        </div>
+          <div className="schedule-progress" aria-hidden="true">
+            <span className="is-active" />
+            <span className={step === 2 ? "is-active" : ""} />
+          </div>
 
-        <p className="booking-description">
-          Preencha suas preferências. O horário será
-          confirmado posteriormente pela barbearia.
-        </p>
+          <header className="schedule-heading">
+            <span className="schedule-step">
+              ETAPA {String(step).padStart(2, "0")} DE 02
+            </span>
+            <h2 id="schedule-title" ref={headingRef} tabIndex={-1}>
+              {step === 1 ? "Seu próximo cuidado." : "Vamos combinar?"}
+            </h2>
+            <p id="schedule-description">
+              {step === 1
+                ? "Escolha o serviço e quem vai cuidar de você."
+                : "Informe quando gostaria de vir. Confirmaremos a disponibilidade depois."}
+            </p>
+          </header>
 
-        <form className="booking-form" onSubmit={handleSubmit}>
-          <label>
-            Seu nome
-            <input
-              type="text"
-              autoComplete="name"
-              placeholder="Como podemos te chamar?"
-              value={form.name}
-              onChange={(e) => updateField("name", e.target.value)}
-              maxLength={80}
-              required
-            />
-          </label>
+          {step === 1 ? (
+            <div className="schedule-stage">
+              <div className="schedule-group">
+                <h3>01. Qual serviço você deseja?</h3>
+                <div className="schedule-services">
+                  {services.map((service) => {
+                    const selected = form.service === service.id;
+                    return (
+                      <button
+                        key={service.id}
+                        type="button"
+                        className={`schedule-service ${selected ? "is-selected" : ""}`}
+                        aria-pressed={selected}
+                        onClick={() => updateField("service", service.id)}
+                      >
+                        <span className="schedule-service-radio" />
+                        <span className="schedule-service-details">
+                          <strong>{service.name}</strong>
+                          <small>{service.duration} minutos</small>
+                        </span>
+                        <span className="schedule-price">
+                          {formatPrice(service.price)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-          <label>
-            Serviço
-            <select
-              value={form.service}
-              onChange={(e) => updateField("service", e.target.value)}
-              required
-            >
-              {services.map((service) => (
-                <option key={service.id} value={service.id}>
-                  {service.name} — R$ {service.price}
-                </option>
-              ))}
-            </select>
-          </label>
+              <div className="schedule-group">
+                <h3>02. Com quem deseja agendar?</h3>
+                <div className="schedule-barbers" role="group" aria-label="Escolha de profissional">
+                  <button
+                    type="button"
+                    className={`schedule-barber ${!form.professional ? "is-selected" : ""}`}
+                    aria-pressed={!form.professional}
+                    onClick={() => updateField("professional", "")}
+                  >
+                    <span className="schedule-barber-avatar schedule-barber-any" aria-hidden="true">✦</span>
+                    <span className="schedule-barber-name">Sem preferência</span>
+                  </button>
 
-          <label>
-            Profissional
-            <select
-              value={form.professional}
-              onChange={(e) =>
-                updateField("professional", e.target.value)
-              }
-            >
-              <option value="">Sem preferência</option>
+                  {professionals.map((professional) => {
+                    const selected = form.professional === professional.id;
+                    return (
+                      <button
+                        key={professional.id}
+                        type="button"
+                        className={`schedule-barber ${selected ? "is-selected" : ""}`}
+                        aria-pressed={selected}
+                        onClick={() => updateField("professional", professional.id)}
+                      >
+                        <img
+                          className="schedule-barber-avatar"
+                          src={professional.image}
+                          alt=""
+                          width="56"
+                          height="56"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <span className="schedule-barber-name">{professional.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-              {professionals.map((professional) => (
-                <option
-                  key={professional.id}
-                  value={professional.id}
+              <button
+                type="button"
+                className="schedule-primary schedule-full"
+                onClick={() => setStep(2)}
+              >
+                Continuar
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          ) : (
+            <form className="schedule-form" onSubmit={handleSubmit}>
+              <div className="schedule-summary">
+                <div>
+                  <small>SEU ATENDIMENTO</small>
+                  <strong>{selectedService?.name}</strong>
+                  <span className="schedule-summary-professional">
+                    {selectedProfessional && (
+                      <img
+                        src={selectedProfessional.image}
+                        alt=""
+                        width="26"
+                        height="26"
+                      />
+                    )}
+                    {selectedProfessional?.name ?? "Qualquer profissional"}
+                  </span>
+                </div>
+                <strong>
+                  {selectedService ? formatPrice(selectedService.price) : ""}
+                </strong>
+              </div>
+
+              <label className="schedule-field">
+                Seu nome
+                <input
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Como podemos chamar você?"
+                  maxLength={80}
+                  value={form.name}
+                  onChange={(event) => updateField("name", event.target.value)}
+                  required
+                />
+              </label>
+
+              <div className="schedule-form-row">
+                <label className="schedule-field">
+                  Data desejada
+                  <input
+                    type="date"
+                    min={getToday()}
+                    value={form.date}
+                    onChange={(event) => updateField("date", event.target.value)}
+                    required
+                  />
+                </label>
+                <label className="schedule-field">
+                  Horário desejado
+                  <input
+                    type="time"
+                    value={form.time}
+                    onChange={(event) => updateField("time", event.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+
+              {status && (
+                <p className="schedule-feedback" role="status">
+                  {status}
+                </p>
+              )}
+
+              <div className="schedule-actions">
+                <button
+                  type="button"
+                  className="schedule-back"
+                  onClick={() => {
+                    setStatus("");
+                    setStep(1);
+                  }}
                 >
-                  {professional.name}
-                </option>
-              ))}
-            </select>
-          </label>
+                  ← Voltar
+                </button>
+                <button type="submit" className="schedule-primary">
+                  {whatsappNumber ? "Ir para o WhatsApp" : "Copiar solicitação"}
+                  <span aria-hidden="true">↗</span>
+                </button>
+              </div>
 
-          <div className="booking-fields">
-            <label>
-              Data desejada
-              <input
-                type="date"
-                min={getToday()}
-                value={form.date}
-                onChange={(e) => updateField("date", e.target.value)}
-                required
-              />
-            </label>
+              <p className="schedule-disclaimer">
+                O horário só será confirmado após o contato com a barbearia.
+              </p>
+            </form>
+          )}
 
-            <label>
-              Horário desejado
-              <input
-                type="time"
-                value={form.time}
-                onChange={(e) => updateField("time", e.target.value)}
-                required
-              />
-            </label>
-          </div>
-
-          <button className="button-primary booking-submit" type="submit">
-            {whatsappNumber
-              ? "Continuar no WhatsApp"
-              : "Copiar solicitação"}
-            <span aria-hidden="true">↗</span>
-          </button>
-
-          <p className="booking-notice">
-            Isto é uma solicitação, não uma reserva confirmada.
-          </p>
-
-          <p role="status" aria-live="polite" className="booking-status">
-            {status}
-          </p>
-        </form>
+          <p className="schedule-demo">Projeto demonstrativo · FORMA.</p>
+        </div>
       </dialog>
     </>
   );
-}
+});
+
+export default Booking;

@@ -1,4 +1,3 @@
-
 export const services = [
   {
     id: "corte",
@@ -29,43 +28,35 @@ export const professionals = [
     name: "Leonardo",
     specialty: "Cortes clássicos e modernos",
     initials: "LE",
+    image: "/images/leonardo.webp",
   },
   {
     id: "rafael",
     name: "Rafael",
     specialty: "Degradês e acabamentos",
     initials: "RA",
+    image: "/images/rafael.webp",
   },
   {
     id: "matheus",
     name: "Matheus",
     specialty: "Barba e estilo masculino",
     initials: "MA",
+    image: "/images/matheus.webp",
   },
 ];
 
-// Deixe vazio enquanto for uma demonstração.
+// Número fictício vazio: o formulário copia a solicitação para demonstrar o fluxo.
+// Para integrar um número real, use o formato internacional, com DDI e DDD.
 export const whatsappNumber = "";
-
-
 
 export const business = {
   name: "FORMA.",
   city: "Jundiaí — SP",
   address: "",
-
   openingHours: [
-    {
-      days: "Segunda a sexta",
-      hours: "09h às 19h",
-    },
-    {
-      days: "Sábado",
-      hours: "09h às 17h",
-    },
-    {
-      days: "Domingo",
-      hours: "Fechado",
-    },
+    { days: "Segunda a sexta", hours: "09h às 19h" },
+    { days: "Sábado", hours: "09h às 17h" },
+    { days: "Domingo", hours: "Fechado" },
   ],
 };

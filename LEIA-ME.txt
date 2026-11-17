@@ -1,0 +1,26 @@
+FORMA. — Fotos e seleção de barbeiros
+
+Este pacote contém somente os arquivos da atualização. Extraia o conteúdo NA RAIZ do seu projeto barbearia-demo, mantendo a estrutura de pastas e substituindo os arquivos correspondentes.
+
+Arquivos incluídos:
+- public/images/leonardo.webp
+- public/images/rafael.webp
+- public/images/matheus.webp
+- src/data/barbershop.js
+- src/components/Professionals.jsx
+- src/components/Booking.jsx
+- src/styles/portraits.css (novo)
+- src/main.jsx (importa portraits.css)
+
+Pré-requisitos: seu projeto já deve conter src/styles/global.css, src/styles/sections.css, src/styles/booking.css, e App.jsx integrando <Professionals onBook={handleBook} /> e <Booking ref={bookingRef} />, conforme a etapa anterior.
+
+Atenção: o barbershop.js contém os dados fictícios da demonstração e whatsappNumber vazio. Se você tiver alterado preços, nomes, horários ou número do WhatsApp, confira antes de sobrescrever este arquivo.
+
+Retratos gerados artificialmente, representando barbeiros fictícios; não confundir com fotos de funcionários reais.
+
+Validação:
+  npm run dev
+  npm run lint
+  npm run build
+
+Depois de conferir a pré-seleção de profissional, preços e imagem em dispositivos móveis, faça o commit da atualização.

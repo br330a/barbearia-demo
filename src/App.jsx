@@ -1,12 +1,21 @@
 
+import { useRef } from "react";
+
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Professionals from "./components/Professionals";
 import Booking from "./components/Booking";
-import { services } from "./data/barbershop";
 import Contact from "./components/Contact";
 
+import { services } from "./data/barbershop";
+
 export default function App() {
+  const bookingRef = useRef(null);
+
+  function handleBook(options = {}) {
+    bookingRef.current?.open(options);
+  }
+
   return (
     <>
       <Navbar />
@@ -30,12 +39,24 @@ export default function App() {
                 <article className="service-card" key={service.id}>
                   <h3>{service.name}</h3>
                   <p>{service.description}</p>
+
                   <strong>
                     {service.price.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
                   </strong>
+
+                  <button
+                    type="button"
+                    className="service-booking"
+                    onClick={() =>
+                      handleBook({ serviceId: service.id })
+                    }
+                  >
+                    Agendar este serviço
+                    <span aria-hidden="true">↗</span>
+                  </button>
                 </article>
               ))}
             </div>
@@ -46,8 +67,10 @@ export default function App() {
           </div>
         </section>
 
-        <Professionals />
-        <Booking />
+        <Professionals onBook={handleBook} />
+
+        <Booking ref={bookingRef} />
+
         <Contact />
       </main>
 
