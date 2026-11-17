@@ -23,19 +23,19 @@
 }
 
 .schedule-day-list {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
+  min-width: 0;
+  width: 100%;
   padding: 2px 1px 10px;
-  overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #c6c9c0 transparent;
-  scroll-snap-type: x proximity;
-  overscroll-behavior-x: contain;
+  overflow: visible;
 }
 
 .schedule-day {
   display: flex;
-  flex: 0 0 67px;
+  min-width: 0;
+  width: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -48,7 +48,6 @@
   color: #252a27;
   font: inherit;
   cursor: pointer;
-  scroll-snap-align: start;
   transition: background .18s ease, border-color .18s ease;
 }
 
@@ -157,13 +156,21 @@
   cursor: not-allowed;
 }
 
+@media (max-width: 600px) {
+  .schedule-day-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 420px) {
   .schedule-times {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
 
-  .schedule-day {
-    flex-basis: 61px;
+@media (max-width: 360px) {
+  .schedule-day-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
