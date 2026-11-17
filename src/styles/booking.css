@@ -88,6 +88,8 @@
 .schedule-modal-inner {
   max-height: calc(100dvh - 32px);
   overflow-y: auto;
+  /* Impede que a rolagem passe ao fundo ao chegar ao limite do modal. */
+  overscroll-behavior-y: contain;
   padding: 28px 32px 22px;
   scrollbar-width: thin;
   scrollbar-color: #cccac3 transparent;
@@ -486,4 +488,11 @@
   .schedule-chip {
     transition: none;
   }
+}
+
+/* Bloqueia a rolagem da landing page enquanto o agendamento estiver aberto.
+   A regra é desativada automaticamente ao fechar o <dialog>. */
+html:has(.schedule-modal[open]),
+body:has(.schedule-modal[open]) {
+  overflow: hidden;
 }
