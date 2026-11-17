@@ -6,6 +6,7 @@ import "./styles/global.css";
 import "./styles/sections.css";
 import "./styles/booking.css";
 import "./styles/portraits.css";
+import "./styles/booking-slots.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

@@ -6,23 +6,18 @@ import {
   useState,
 } from "react";
 
+import { services, professionals, whatsappNumber } from "../data/barbershop";
 import {
-  services,
-  professionals,
-  whatsappNumber,
-} from "../data/barbershop";
+  formatDateHuman,
+  getDaySlots,
+  getOperatingLabel,
+  getPeriod,
+  getPeriodOptions,
+  getUpcomingBookableDays,
+} from "../utils/bookingAvailability";
 
-const formatPrice = (price) =>
-  price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-function getToday() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
+const formatPrice = (value) =>
+  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 const Booking = forwardRef(function Booking(_props, ref) {
   const dialogRef = useRef(null);
@@ -30,7 +25,8 @@ const Booking = forwardRef(function Booking(_props, ref) {
   const headingRef = useRef(null);
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState("");
-
+  const [sessionTime, setSessionTime] = useState(() => new Date());
+  const [period, setPeriod] = useState("manha");
   const [form, setForm] = useState({
     name: "",
     service: services[0].id,
@@ -43,9 +39,27 @@ const Booking = forwardRef(function Booking(_props, ref) {
   const selectedProfessional = professionals.find(
     (item) => item.id === form.professional
   );
+  const duration = selectedService?.duration ?? services[0].duration;
+  const bookableDays = getUpcomingBookableDays(duration, sessionTime);
+  const daySlots = form.date ? getDaySlots(form.date, duration, sessionTime) : [];
+  const periodOptions = getPeriodOptions(daySlots);
+  const activePeriod = periodOptions.some((option) => option.id === period)
+    ? period
+    : periodOptions[0]?.id;
+  const displayedSlots = daySlots.filter((time) => getPeriod(time) === activePeriod);
 
   function updateField(field, value) {
     setForm((previous) => ({ ...previous, [field]: value }));
+    setStatus("");
+  }
+
+  function selectService(serviceId) {
+    setForm((previous) => ({
+      ...previous,
+      service: serviceId,
+      date: "",
+      time: "",
+    }));
     setStatus("");
   }
 
@@ -53,21 +67,25 @@ const Booking = forwardRef(function Booking(_props, ref) {
     serviceId = services[0].id,
     professionalId = "",
   } = {}) {
+    const chosenService = services.some((item) => item.id === serviceId)
+      ? serviceId
+      : services[0].id;
+    const chosenProfessional = professionals.some((item) => item.id === professionalId)
+      ? professionalId
+      : "";
+
     setForm((previous) => ({
       ...previous,
-      service: services.some((item) => item.id === serviceId)
-        ? serviceId
-        : services[0].id,
-      professional: professionals.some((item) => item.id === professionalId)
-        ? professionalId
-        : "",
+      service: chosenService,
+      professional: chosenProfessional,
+      date: "",
+      time: "",
     }));
-    setStep(1);
+    setSessionTime(new Date());
+    setPeriod("manha");
     setStatus("");
-
-    if (!dialogRef.current?.open) {
-      dialogRef.current?.showModal();
-    }
+    setStep(1);
+    if (!dialogRef.current?.open) dialogRef.current?.showModal();
   }
 
   useImperativeHandle(ref, () => ({ open: openBooking }));
@@ -79,22 +97,53 @@ const Booking = forwardRef(function Booking(_props, ref) {
     }
   }, [step]);
 
+  function goToDateStep() {
+    const now = new Date();
+    const days = getUpcomingBookableDays(duration, now);
+    const selectedDate = days.some((day) => day.iso === form.date)
+      ? form.date
+      : days[0]?.iso ?? "";
+    const slots = selectedDate ? getDaySlots(selectedDate, duration, now) : [];
+    setSessionTime(now);
+    setForm((previous) => ({
+      ...previous,
+      date: selectedDate,
+      time: slots.includes(previous.time) ? previous.time : "",
+    }));
+    setPeriod(getPeriodOptions(slots)[0]?.id ?? "manha");
+    setStatus("");
+    setStep(2);
+  }
+
+  function selectDate(isoDate) {
+    if (form.date === isoDate) return;
+    const slots = getDaySlots(isoDate, duration, sessionTime);
+    setForm((previous) => ({ ...previous, date: isoDate, time: "" }));
+    setPeriod(getPeriodOptions(slots)[0]?.id ?? "manha");
+    setStatus("");
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
+    const now = new Date();
+    const isValidTime = getDaySlots(form.date, duration, now).includes(form.time);
 
     if (!selectedService || !form.name.trim()) {
-      setStatus("Preencha seu nome e selecione um serviço.");
+      setStatus("Informe seu nome antes de continuar.");
       return;
     }
 
-    const requestedDate = new Date(`${form.date}T${form.time}:00`);
-    if (
-      !form.date ||
-      !form.time ||
-      Number.isNaN(requestedDate.getTime()) ||
-      requestedDate <= new Date()
-    ) {
-      setStatus("Escolha uma data e um horário futuros.");
+    if (!isValidTime) {
+      // Atualiza as sugestões e desmarca horários que acabaram de expirar.
+      const days = getUpcomingBookableDays(duration, now);
+      const nextDate = days.some((day) => day.iso === form.date)
+        ? form.date
+        : days[0]?.iso ?? "";
+      const slots = nextDate ? getDaySlots(nextDate, duration, now) : [];
+      setSessionTime(now);
+      setForm((previous) => ({ ...previous, date: nextDate, time: "" }));
+      setPeriod(getPeriodOptions(slots)[0]?.id ?? "manha");
+      setStatus("Esse horário já passou. Selecione outro horário para solicitar.");
       return;
     }
 
@@ -108,14 +157,12 @@ const Booking = forwardRef(function Booking(_props, ref) {
       `Data desejada: ${day}/${month}/${year}`,
       `Horário desejado: ${form.time}`,
       "",
-      "Podem confirmar a disponibilidade?",
+      "Podem confirmar se esse horário está disponível?",
     ].join("\n");
 
     const phone = whatsappNumber.replace(/\D/g, "");
     if (phone) {
-      window.location.assign(
-        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
-      );
+      window.location.assign(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`);
       return;
     }
 
@@ -123,7 +170,7 @@ const Booking = forwardRef(function Booking(_props, ref) {
       await navigator.clipboard.writeText(message);
       setStatus("Solicitação copiada! Este é um projeto demonstrativo.");
     } catch {
-      setStatus("Não foi possível copiar. Verifique a permissão do navegador.");
+      setStatus("Não foi possível copiar. Verifique as permissões do navegador.");
     }
   }
 
@@ -135,16 +182,10 @@ const Booking = forwardRef(function Booking(_props, ref) {
             <span className="eyebrow">SEU PRÓXIMO CORTE</span>
             <h2>Um momento para você.</h2>
             <p>
-              Seu estilo merece atenção. Escolha o atendimento e solicite seu
-              horário.
+              Seu estilo merece atenção. Escolha o atendimento e solicite seu horário.
             </p>
-            <button
-              type="button"
-              className="schedule-primary"
-              onClick={() => openBooking()}
-            >
-              Solicitar agendamento
-              <span aria-hidden="true">↗</span>
+            <button type="button" className="schedule-primary" onClick={() => openBooking()}>
+              Solicitar agendamento <span aria-hidden="true">↗</span>
             </button>
           </div>
         </div>
@@ -163,8 +204,8 @@ const Booking = forwardRef(function Booking(_props, ref) {
             <button
               type="button"
               className="schedule-close"
-              onClick={() => dialogRef.current?.close()}
               aria-label="Fechar agendamento"
+              onClick={() => dialogRef.current?.close()}
             >
               <span aria-hidden="true">×</span>
             </button>
@@ -176,16 +217,14 @@ const Booking = forwardRef(function Booking(_props, ref) {
           </div>
 
           <header className="schedule-heading">
-            <span className="schedule-step">
-              ETAPA {String(step).padStart(2, "0")} DE 02
-            </span>
+            <span className="schedule-step">ETAPA {String(step).padStart(2, "0")} DE 02</span>
             <h2 id="schedule-title" ref={headingRef} tabIndex={-1}>
-              {step === 1 ? "Seu próximo cuidado." : "Vamos combinar?"}
+              {step === 1 ? "Seu próximo cuidado." : "Escolha seu momento."}
             </h2>
             <p id="schedule-description">
               {step === 1
                 ? "Escolha o serviço e quem vai cuidar de você."
-                : "Informe quando gostaria de vir. Confirmaremos a disponibilidade depois."}
+                : "Selecione um dia e horário de preferência. A barbearia confirma depois."}
             </p>
           </header>
 
@@ -202,16 +241,14 @@ const Booking = forwardRef(function Booking(_props, ref) {
                         type="button"
                         className={`schedule-service ${selected ? "is-selected" : ""}`}
                         aria-pressed={selected}
-                        onClick={() => updateField("service", service.id)}
+                        onClick={() => selectService(service.id)}
                       >
-                        <span className="schedule-service-radio" />
+                        <span className="schedule-service-radio" aria-hidden="true" />
                         <span className="schedule-service-details">
                           <strong>{service.name}</strong>
                           <small>{service.duration} minutos</small>
                         </span>
-                        <span className="schedule-price">
-                          {formatPrice(service.price)}
-                        </span>
+                        <span className="schedule-price">{formatPrice(service.price)}</span>
                       </button>
                     );
                   })}
@@ -230,13 +267,12 @@ const Booking = forwardRef(function Booking(_props, ref) {
                     <span className="schedule-barber-avatar schedule-barber-any" aria-hidden="true">✦</span>
                     <span className="schedule-barber-name">Sem preferência</span>
                   </button>
-
                   {professionals.map((professional) => {
                     const selected = form.professional === professional.id;
                     return (
                       <button
-                        key={professional.id}
                         type="button"
+                        key={professional.id}
                         className={`schedule-barber ${selected ? "is-selected" : ""}`}
                         aria-pressed={selected}
                         onClick={() => updateField("professional", professional.id)}
@@ -257,17 +293,12 @@ const Booking = forwardRef(function Booking(_props, ref) {
                 </div>
               </div>
 
-              <button
-                type="button"
-                className="schedule-primary schedule-full"
-                onClick={() => setStep(2)}
-              >
-                Continuar
-                <span aria-hidden="true">→</span>
+              <button type="button" className="schedule-primary schedule-full" onClick={goToDateStep}>
+                Continuar <span aria-hidden="true">→</span>
               </button>
             </div>
           ) : (
-            <form className="schedule-form" onSubmit={handleSubmit}>
+            <form className="schedule-form schedule-form-time" onSubmit={handleSubmit}>
               <div className="schedule-summary">
                 <div>
                   <small>SEU ATENDIMENTO</small>
@@ -284,17 +315,86 @@ const Booking = forwardRef(function Booking(_props, ref) {
                     {selectedProfessional?.name ?? "Qualquer profissional"}
                   </span>
                 </div>
-                <strong>
-                  {selectedService ? formatPrice(selectedService.price) : ""}
-                </strong>
+                <strong>{selectedService ? formatPrice(selectedService.price) : ""}</strong>
+              </div>
+
+              <div className="schedule-date-section">
+                <div className="schedule-field-heading">
+                  <strong>01. Qual dia prefere?</strong>
+                  <span>Próximos dias de atendimento</span>
+                </div>
+                <div className="schedule-day-list" role="group" aria-label="Data desejada">
+                  {bookableDays.map((day) => {
+                    const chosen = form.date === day.iso;
+                    return (
+                      <button
+                        key={day.iso}
+                        type="button"
+                        className={`schedule-day ${chosen ? "is-selected" : ""}`}
+                        aria-pressed={chosen}
+                        aria-label={day.fullLabel}
+                        onClick={() => selectDate(day.iso)}
+                      >
+                        <span className="schedule-day-week">{day.today ? "Hoje" : day.weekday}</span>
+                        <strong>{day.number}</strong>
+                        <span className="schedule-day-month">{day.month}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="schedule-day-info">
+                  {form.date ? `${formatDateHuman(form.date)} · ${getOperatingLabel(form.date)}` : "Sem datas sugeridas."}
+                </p>
+              </div>
+
+              <div className="schedule-time-section">
+                <div className="schedule-field-heading">
+                  <strong>02. Qual horário prefere?</strong>
+                  <span>Duração: {duration} min</span>
+                </div>
+                {periodOptions.length > 0 ? (
+                  <>
+                    <div className="schedule-periods" role="group" aria-label="Período do dia">
+                      {periodOptions.map((option) => (
+                        <button
+                          key={option.id}
+                          type="button"
+                          className={`schedule-period ${activePeriod === option.id ? "is-selected" : ""}`}
+                          aria-pressed={activePeriod === option.id}
+                          onClick={() => setPeriod(option.id)}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="schedule-times" role="group" aria-label="Horário de preferência">
+                      {displayedSlots.map((time) => (
+                        <button
+                          type="button"
+                          key={time}
+                          className={`schedule-time ${form.time === time ? "is-selected" : ""}`}
+                          aria-pressed={form.time === time}
+                          onClick={() => updateField("time", time)}
+                        >
+                          {time}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p className="schedule-day-info">Nenhum horário sugerido para este dia. Escolha outra data.</p>
+                )}
+                <p className="schedule-availability-note">
+                  Horários para solicitar, não vagas confirmadas. A disponibilidade será verificada pela barbearia.
+                </p>
               </div>
 
               <label className="schedule-field">
-                Seu nome
+                03. Como podemos chamar você?
                 <input
                   type="text"
                   autoComplete="name"
-                  placeholder="Como podemos chamar você?"
+                  placeholder="Seu nome"
                   maxLength={80}
                   value={form.name}
                   onChange={(event) => updateField("name", event.target.value)}
@@ -302,53 +402,27 @@ const Booking = forwardRef(function Booking(_props, ref) {
                 />
               </label>
 
-              <div className="schedule-form-row">
-                <label className="schedule-field">
-                  Data desejada
-                  <input
-                    type="date"
-                    min={getToday()}
-                    value={form.date}
-                    onChange={(event) => updateField("date", event.target.value)}
-                    required
-                  />
-                </label>
-                <label className="schedule-field">
-                  Horário desejado
-                  <input
-                    type="time"
-                    value={form.time}
-                    onChange={(event) => updateField("time", event.target.value)}
-                    required
-                  />
-                </label>
-              </div>
-
-              {status && (
-                <p className="schedule-feedback" role="status">
-                  {status}
-                </p>
-              )}
+              {status && <p className="schedule-feedback" role="status">{status}</p>}
 
               <div className="schedule-actions">
                 <button
                   type="button"
                   className="schedule-back"
-                  onClick={() => {
-                    setStatus("");
-                    setStep(1);
-                  }}
+                  onClick={() => { setStatus(""); setStep(1); }}
                 >
                   ← Voltar
                 </button>
-                <button type="submit" className="schedule-primary">
+                <button
+                  type="submit"
+                  className="schedule-primary"
+                  disabled={!form.time || !form.name.trim()}
+                >
                   {whatsappNumber ? "Ir para o WhatsApp" : "Copiar solicitação"}
                   <span aria-hidden="true">↗</span>
                 </button>
               </div>
-
               <p className="schedule-disclaimer">
-                O horário só será confirmado após o contato com a barbearia.
+                Sua solicitação não é uma reserva confirmada.
               </p>
             </form>
           )}
