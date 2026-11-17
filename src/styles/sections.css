@@ -406,3 +406,31 @@ button.button-primary {
     letter-spacing: -1.5px;
   }
 }
+
+.service-booking {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 15px 0;
+  border: 0;
+  border-top: 1px solid #e8e5de;
+  background: transparent;
+  color: #252a27;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.service-booking:hover {
+  color: #727967;
+}
+
+.service-booking:focus-visible {
+  outline: 3px solid #727967;
+  outline-offset: 3px;
+}
