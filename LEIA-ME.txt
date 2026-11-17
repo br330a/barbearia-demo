@@ -1,36 +1,42 @@
-FORMA. — Atualização: escolha intuitiva de datas e horários
+FORMA. — MAPA INTERATIVO DA SEÇÃO DE LOCALIZAÇÃO
 
-INSTRUÇÕES:
-Extraia este ZIP na raiz do seu projeto barbearia-demo, mantendo a estrutura de pastas.
-Substitua os 3 arquivos existentes (Booking.jsx, barbershop.js e main.jsx).
-O pacote também adiciona 2 arquivos novos: bookingAvailability.js e booking-slots.css.
-Não substitui fotos, demais componentes ou o seu CSS já existente.
+1) Extraia este ZIP na RAIZ do projeto barbearia-demo, preservando as pastas.
+   Ele substitui apenas src/components/Contact.jsx e adiciona:
+   - src/components/DemoMap.jsx
+   - src/styles/map.css
 
-FUNCIONALIDADES:
-- Datas sugeridas em cartões horizontais, somente dias com atendimento e horários futuros.
-- Domingo fica fechado; segunda a sexta 09h-19h; sábado 09h-17h.
-- Intervalos de 30 minutos, com mínimo de 30 minutos de antecedência.
-- O horário final respeita a duração real do serviço escolhido.
-- Períodos do dia (manhã, tarde e fim do dia) e horários em botões.
-- Mantém fotos, seleção prévia de profissional/serviço e mensagem por WhatsApp.
-- Solicitações não representam vagas livres nem confirmam reservas.
+2) No terminal da pasta barbearia-demo, instale a dependência:
+   npm install leaflet@^1.9.4
 
-ATENÇÃO: o arquivo barbershop.js contém informações fictícias. Se personalizou nomes, preços ou WhatsApp, confira as diferenças antes de substituir.
+3) Teste no navegador com:
+   npm run dev
 
-TESTES:
-1. Domingo não deve aparecer entre os dias.
-2. No sábado, combo de 60 min só pode começar até 16h.
-3. Dias anteriores e horários passados não devem aparecer.
-4. Ao mudar o dia, o horário antigo deve ser desmarcado.
-5. Em tela pequena, os dias podem ser arrastados horizontalmente.
-6. Escolha serviço e profissional via cartão e confira a pré-seleção.
-7. Copie a solicitação e confira o texto.
+4) Valide:
+   npm run lint
+   npm run build
+   git status
 
-npm run lint
-npm run build
-git status
+5) Se tudo estiver certo, depois de conferir git status:
+   git add .
+   git commit -m "feat: adiciona mapa interativo demonstrativo"
+   git push
 
-Depois dos testes:
-git add .
-git commit -m "feat: melhora seleção de datas e horários do agendamento"
-git push
+O QUE ESTA ATUALIZAÇÃO FAZ:
+- Mapa interativo na seção Contato, com zoom e deslocamento.
+- Ponto de referência na Praça Governador Pedro de Toledo (Centro de Jundiaí),
+  claramente marcado como ILUSTRATIVO. Não é o endereço de um estabelecimento.
+- Marcador customizado FORMA. e popup informativo.
+- Botão 'Ver região no Google Maps' (não são instruções até uma barbearia).
+- Carregamento sob demanda quando a seção se aproxima da tela.
+- Sem rolagem horizontal; no celular, o mapa só captura arrasto após tocar
+  em 'Explorar mapa', e 'Concluir navegação' devolve o gesto de scroll à página.
+- Attribution © OpenStreetMap visível na parte inferior do mapa.
+- Sem banco de dados ou API key.
+
+ATENÇÃO:
+- Os blocos do mapa dependem da conexão com a internet para carregar os tiles.
+- O serviço público de tiles OSM não tem SLA e exige cumprimento da política de uso:
+  https://operations.osmfoundation.org/policies/tiles/
+- Ao usar o site com clientes e tráfego constante, reavalie o provedor de tiles.
+- Arquivo Contact.jsx assume os dados e a estilização existentes no projeto
+  (barbershop.js, sections.css).

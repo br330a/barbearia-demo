@@ -1,5 +1,5 @@
-
 import { business } from "../data/barbershop";
+import DemoMap from "./DemoMap";
 
 export default function Contact() {
   return (
@@ -26,7 +26,7 @@ export default function Contact() {
               {business.city}
               <span>
                 {business.address ||
-                  "Endereço a definir — projeto demonstrativo"}
+                  "Ponto ilustrativo no Centro — sem endereço comercial"}
               </span>
             </address>
           </div>
@@ -56,6 +56,10 @@ export default function Contact() {
             Horários ilustrativos.
           </p>
         </div>
+      </div>
+
+      <div className="container">
+        <DemoMap />
       </div>
     </section>
   );
